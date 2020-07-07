@@ -1,0 +1,52 @@
+This document details the thought process behind making the move_check() and
+the move() function.
+
+Points to considerate:
+1 - We only have to check eating when a new piece is put on the board.
+2 - A single stone is a group of one stone.
+3 - When eating a group of stones, the stone that is placed to conlcude the
+eating must be in contact with a part of said group.
+4 - The rule of repetition prohibits a move that leaves the board in the state
+of the previous turn. This rule avoids infinite repetition.
+5 - A single move can eat up to 4 groups of stones
+6 - A move that results on enemy stones being eaten won't result in one's own
+stone being eaten
+
+Possible actions:
+1 - Call the moveCheck() function before confirming that a stone was placed.
+This way we can also detect if the move is illegal* and refuse the allow it.
+2 - Treat the whole group as a single stone.
+3 - Only check the groups that are in contact with the stone that was placed.
+4 - Record the previous state and make a check at the end of the move to compare
+the new state with the state that was recorded as previous.
+
+Implementation details:
+0 - The main game loop, variables and functions will be transformed into a class
+1 - The move() function will call move_check() as it first action.
+2 - Move check will return three values, a boolean defining if the move is
+allowed, a list detailing all the stones that are to be removed(if the list is
+empty no element will be deleted).
+3 - There will be a createGroup() function that will act recursively.
+4 - At the end a copy of the board will be stored as a variable on the game
+object to be used for checking the repetition rule.
+5 - The createGroup() function will return two lists made of a list containg
+enemy groups and the player group.
+6 - The create group must only take stones indepently of the color on it's first
+call. After that it will only take stones of the same color.
+7 - A Group class will be implemented, it will contain the locations of the
+stones in it, the color of the group, and the group absolute freedom(this is
+what determines if the group gets eaten).
+8 - It will be checked fist if enemy grops were captured and return True so we
+don't have to check the player group as it is not nessesary.
+
+*Illegal moves: a move that renders the player´s group of stones whithout any
+liberties and thus it leads to it getting eaten on the same turn. The exeption
+to this rule is a move that eats enemy stones and then leaves extra space for
+the group to stay un-eaten.x
+
+Things to do:
+#-Write the stone group get_freedom_level() method
+#-Modify the detectStones() function to help the purpose
+#-There may be a scope problem on the stone creation
+-Lists seem to get overwritten
+-Test until it works
